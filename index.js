@@ -1,23 +1,29 @@
 const Discord = require("discord.js")
 require("dotenv").config()
 
-const TOKEN = "OTQ0OTAxNzI5NTYzMDgyODIz.YhIWTw.oIWnqu6hrgWpVgjCeDbKH947ISs"
-
 const client = new Discord.Client({
     intents: [
         "GUILDS",
         "GUILD_MESSAGES",
+        "GUILD_MEMBERS"
     ]
 })
 
-client.on("ready", () => {
-    console.log(`Logged in as ${client.user.tag}`)
-})
-
-client.on("messageCreate", (message) => {
-    if (message.content == "ko"){
-        message.reply("hui s oko")
+    let bot = {
+        client,
+        prefix: "c.",
+        owners: ["523799017361244181"]
     }
-})
+    
+    client.commands = new Discord.Collection()
+    client.events = new Discord.Collection()
+
+    client.loadEvents = (bot, reload) => require("./handlers/events")(bot, reload)
+    client.loadCommands = (bot, reload) => require("./handlers/commands")(bot,reload)
+
+    client.loadEvents(bot, false)
+    client.loadCommands(bot, false)
+
+    module.exports = bot 
 
 client.login(process.env.TOKEN)
